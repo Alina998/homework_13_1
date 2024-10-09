@@ -19,7 +19,7 @@ class TestReadTransactionsFromCSV(unittest.TestCase):
         mock_read_csv.return_value = pd.read_csv(StringIO(csv_data))
 
         # Путь к файлу, на самом деле он не будет использован из-за mock
-        file_path = "dummy_path.csv"
+        file_path = "fake_path.csv"
 
         # Вызов тестируемой функции
         transactions = read_transactions_from_csv(file_path)
@@ -41,7 +41,7 @@ class TestReadTransactionsFromCSV(unittest.TestCase):
         # На этот раз сделаем так, чтобы чтение CSV файла выдало ошибку
         mock_read_csv.side_effect = Exception("File not found")
 
-        file_path = "dummy_path.csv"
+        file_path = "fake_path.csv"
         transactions = read_transactions_from_csv(file_path)
 
         # Ожидаем, что результат будет пустым списком
