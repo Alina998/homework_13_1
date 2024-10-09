@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import patch
+
 import pandas as pd
+
 from src.read_from_excel import read_transactions_from_excel
 
 

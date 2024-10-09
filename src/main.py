@@ -1,10 +1,7 @@
-import csv
 import json
 import re
-from datetime import datetime
 from collections import Counter
-
-import pandas as pd
+from datetime import datetime
 
 from src.read_from_csv import read_transactions_from_csv
 from src.read_from_excel import read_transactions_from_excel
@@ -31,37 +28,19 @@ def load_transactions_from_json(file_path):
         return json.load(file)
 
 
-def sort_by_date(filtered_transactions, order='по возрастанию'):
+def sort_by_date(filtered_transactions, order="по возрастанию"):
     def date_parser(date_str):
-        if 'Z' in date_str:
-            return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+        if "Z" in date_str:
+            return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
         else:
-            return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f')
-    if order == 'по возрастанию':
-        return sorted(filtered_transactions, key=lambda x: date_parser(x['date']))
-    elif order == 'по убыванию':
-        return sorted(filtered_transactions, key=lambda x: date_parser(x['date']), reverse=True)
+            return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
+
+    if order == "по возрастанию":
+        return sorted(filtered_transactions, key=lambda x: date_parser(x["date"]))
+    elif order == "по убыванию":
+        return sorted(filtered_transactions, key=lambda x: date_parser(x["date"]), reverse=True)
     else:
         raise ValueError("Invalid order. Please specify 'asc' or 'desc'.")
-
-def filter_transactions_by_status(transactions, status):
-    while True:
-        status = input(
-            "Введите статус, по которому необходимо выполнить фильтрацию. "
-            "Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING\nПользователь: "
-        ).upper()
-        if status in ["EXECUTED", "CANCELED", "PENDING"]:
-            break
-        else:
-            print("Программа: Неправильный ввод. Пожалуйста, выберите один из доступных статусов.")
-
-    filtered_transactions = [t for t in transactions if t.get("state") == status]
-
-    print(f'Программа: Операции отфильтрованы по статусу "{status}"')
-
-    if not filtered_transactions:
-        print("Программа: Не найдено ни одной транзакции.")
-        return
 
 
 def main():
@@ -90,18 +69,20 @@ def main():
         transactions = []
 
         for item in data:
-            values = list(item.values())[0].split(';')
-            transactions.append({
-                'id': values[0],
-                'state': values[1],
-                'date': values[2],
-                'amount': values[3],
-                'currency_name': values[4],
-                'currency_code': values[5],
-                'from': values[6],
-                'to': values[7],
-                'description': ';'.join(values[8:])
-            })
+            values = list(item.values())[0].split(";")
+            transactions.append(
+                {
+                    "id": values[0],
+                    "state": values[1],
+                    "date": values[2],
+                    "amount": values[3],
+                    "currency_name": values[4],
+                    "currency_code": values[5],
+                    "from": values[6],
+                    "to": values[7],
+                    "description": ";".join(values[8:]),
+                }
+            )
         print("Программа: Для обработки выбран CSV-файл.")
 
     elif choice == "3":
@@ -109,9 +90,23 @@ def main():
         transactions = read_transactions_from_excel(file_path)
         print("Программа: Для обработки выбран XLSX-файл.")
 
-    print(transactions)
+    while True:
+        status = input(
+            "Введите статус, по которому необходимо выполнить фильтрацию. "
+            "Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING\nПользователь: "
+        ).upper()
+        if status in ["EXECUTED", "CANCELED", "PENDING"]:
+            break
+        else:
+            print("Программа: Неправильный ввод. Пожалуйста, выберите один из доступных статусов.")
 
-    filter_transactions_by_status(transactions)
+    filtered_transactions = [t for t in transactions if t.get("state") == status]
+
+    print(f'Программа: Операции отфильтрованы по статусу "{status}"')
+
+    if not filtered_transactions:
+        print("Программа: Не найдено ни одной транзакции.")
+        return
 
     while True:
         sort_choice = input("Отсортировать операции по дате? Да/Нет\nПользователь: ").strip().lower()
@@ -129,7 +124,6 @@ def main():
                 print("Программа: Неправильный ввод. Пожалуйста, выберите 'по возрастанию' или 'по убыванию'.")
             sort_by_date(filtered_transactions, order_choice)
 
-
     while True:
         currency_choice = input("Выводить только рублевые транзакции? Да/Нет\nПользователь: ").strip().lower()
         if currency_choice in ["да", "нет"]:
@@ -140,7 +134,6 @@ def main():
     if currency_choice == "да":
         filtered_transactions = [t for t in filtered_transactions if "RUB" in t.get("currency_code", "")]
         print(filtered_transactions)
-
 
     while True:
         description_filter = (
@@ -165,9 +158,9 @@ def main():
 
     print(f"Всего банковских операций в выборке: {len(filtered_transactions)}")
     for transaction in filtered_transactions:
-        if transaction['description'] == "Открытие вклада":
+        if transaction["description"] == "Открытие вклада":
             print(f"{transaction['date']} {transaction['description']}")
-            print(transaction['to'])
+            print(transaction["to"])
             print(f"Сумма: {transaction['amount']} {transaction['currency_code']}\n")
         else:
             print(f"{transaction['date']} {transaction['description']}")
