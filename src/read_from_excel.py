@@ -15,7 +15,7 @@ def read_transactions_from_excel(file_path):
 
 
 if __name__ == "__main__":
-    file_path = "C:/Users/pasta/Desktop/homework_13_1/data/transactions_excel.xlsx"
+    file_path = "/data/transactions_excel.xlsx"
 
     # Считываем транзакции из CSV файла
     transactions = read_transactions_from_excel(file_path)

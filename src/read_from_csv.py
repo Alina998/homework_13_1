@@ -1,4 +1,5 @@
 import pandas as pd
+import pathlib
 
 from src.external_api import convert_to_rubble
 
@@ -14,7 +15,7 @@ def read_transactions_from_csv(file_path):
 
 
 if __name__ == "__main__":
-    file_path = "C:/Users/pasta/Desktop/homework_13_1/data/transactions.csv"
+    file_path = "data/transactions.csv"
 
     # Считываем транзакции из CSV файла
     transactions = read_transactions_from_csv(file_path)
