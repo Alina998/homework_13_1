@@ -1,7 +1,7 @@
 import pandas as pd
-import pathlib
 
 from src.external_api import convert_to_rubble
+
 
 def read_transactions_from_csv(file_path):
     """Функция считывает данные из CSV файла и возвращает список транзакций"""

@@ -132,7 +132,14 @@ def main():
             print("Программа: Неправильный ввод. Пожалуйста, выберите 'Да' или 'Нет'.")
 
     if currency_choice == "да":
-        filtered_transactions = [t for t in filtered_transactions if "RUB" in t.get("currency_code", "")]
+        if choice == 1:
+            filtered_transactions = [
+                transaction
+                for transaction in transactions
+                if transaction["operationAmount"]["currency"]["code"] == "RUB"
+            ]
+        elif choice == 2:
+            filtered_transactions = [t for t in filtered_transactions if "RUB" in t.get("currency_code", "")]
         print(filtered_transactions)
 
     while True:
@@ -157,15 +164,31 @@ def main():
         return
 
     print(f"Всего банковских операций в выборке: {len(filtered_transactions)}")
-    for transaction in filtered_transactions:
-        if transaction["description"] == "Открытие вклада":
-            print(f"{transaction['date']} {transaction['description']}")
-            print(transaction["to"])
-            print(f"Сумма: {transaction['amount']} {transaction['currency_code']}\n")
-        else:
-            print(f"{transaction['date']} {transaction['description']}")
-            print(f"{transaction['from']} -> {transaction['to']}")
-            print(f"Сумма: {transaction['amount']} {transaction['currency_code']}\n")
+    if choice == "1":
+        for transaction in filtered_transactions:
+            if transaction["description"] == "Открытие вклада":
+                print(f"{transaction['date']} {transaction['description']}")
+                print(transaction["to"])
+                operation_amount_json = transaction["operationAmount"]["amount"]
+                currency_name_json = transaction["operationAmount"]["currency"]["code"]
+                print(f"Сумма: {operation_amount_json} {currency_name_json}\n")
+            else:
+                print(f"{transaction['date']} {transaction['description']}")
+                print(f"{transaction['from']} -> {transaction['to']}")
+                print(
+                    f"Сумма: {transaction['operationAmount']['amount']} {transaction['operationAmount']['currency']['code']}\n"
+                )
+
+    elif choice == "2":
+        for transaction in filtered_transactions:
+            if transaction["description"] == "Открытие вклада":
+                print(f"{transaction['date']} {transaction['description']}")
+                print(transaction["to"])
+                print(f"Сумма: {transaction['amount']} {transaction['currency_code']}\n")
+            else:
+                print(f"{transaction['date']} {transaction['description']}")
+                print(f"{transaction['from']} -> {transaction['to']}")
+                print(f"Сумма: {transaction['amount']} {transaction['currency_code']}\n")
 
 
 if __name__ == "__main__":
